@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+   <center>
+      <TabPane fx:id="tabbedPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab closable="false" text="Control Panel">
+               <content>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="440.0" minHeight="0.0" prefHeight="188.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="500.0" minHeight="10.0" prefHeight="239.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="304.0" minHeight="10.0" prefHeight="222.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <GridPane prefHeight="643.0" prefWidth="616.0" GridPane.columnIndex="1" GridPane.rowSpan="3">
+                          <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.0" minWidth="10.0" prefWidth="94.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="427.0" minWidth="10.0" prefWidth="387.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="167.0" minWidth="10.0" prefWidth="140.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="135.0" minWidth="10.0" prefWidth="27.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="608.0" minHeight="10.0" prefHeight="608.0" vgrow="SOMETIMES" />
+                            <RowConstraints maxHeight="319.0" minHeight="10.0" prefHeight="41.0" valignment="CENTER" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="41.0" prefWidth="108.0" text="Command:" GridPane.rowIndex="1">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <TextArea id="console-text-area" fx:id="consoleTextArea" stylesheets="@bioreactorui.css" text="Lorem ipsum dolor sit amet, assum virtute eloquentiam mel eu, mei an prompta mandamus, ex ius cibo justo ancillae. Ut quaeque adipiscing quo, autem legimus duo eu, cum ne forensibus interpretaris. No hinc ridens petentium est. Ea unum deserunt pro, ut quaestio democritum dissentias ius. In vim primis singulis, ea cum consul sadipscing. Nam liber tritani te, ut sea tantas pertinax assentior, ius lobortis sadipscing et.Et has aeque utinam. Esse dicit ut per, his alii mandamus ei. Possim quodsi audiam eos ad, ad labore interesset conclusionemque cum. Posse vocibus propriae ea vel, qui esse eloquentiam ex.Ut nostro tincidunt mnesarchum eum, duo ne luptatum liberavisse, eam quando alterum inciderint ut. At omnis theophrastus quo, in illum dolorem epicurei eam, omnis imperdiet quo ut. Fuisset percipit persequeris no nec, te vocent perpetua iudicabit vim. Ad dicat consulatu neglegentur est, vel assum ancillae no. Ei mel veniam impedit efficiendi, ei mei postea essent invidunt.No diam audiam volutpat eum. Dicant tacimates tincidunt et sit, ei vim mazim maiorum ocurreret. Possit posidonium signiferumque cu vel, an vis liber exerci. Cu consul cotidieque signiferumque cum, ea has erant fabulas. Ut eos fuisset nostrum, id per placerat convenire conclusionemque, duo ea modo assum albucius.Has labitur eripuit no. Mutat verear gubergren vim et, sonet eripuit tincidunt duo te. Vix an oratio dicant oporteat. Has et congue aliquam expetendis, eam ut esse mandamus scribentur, eam te delenit comprehensam. Minim aeterno reformidans at per.Lorem ipsum dolor sit amet, assum virtute eloquentiam mel eu, mei an prompta mandamus, ex ius cibo justo ancillae. Ut quaeque adipiscing quo, autem legimus duo eu, cum ne forensibus interpretaris. No hinc ridens petentium est. Ea unum deserunt pro, ut quaestio democritum dissentias ius. In vim primis singulis, ea cum consul sadipscing. Nam liber tritani te, ut sea tantas pertinax assentior, ius lobortis sadipscing et.Et has aeque utinam. Esse dicit ut per, his alii mandamus ei. Possim quodsi audiam eos ad, ad labore interesset conclusionemque cum. Posse vocibus propriae ea vel, qui esse eloquentiam ex.Ut nostro tincidunt mnesarchum eum, duo ne luptatum liberavisse, eam quando alterum inciderint ut. At omnis theophrastus quo, in illum dolorem epicurei eam, omnis imperdiet quo ut. Fuisset percipit persequeris no nec, te vocent perpetua iudicabit vim. Ad dicat consulatu neglegentur est, vel assum ancillae no. Ei mel veniam impedit efficiendi, ei mei postea essent invidunt.No diam audiam volutpat eum. Dicant tacimates tincidunt et sit, ei vim mazim maiorum ocurreret. Possit posidonium signiferumque cu vel, an vis liber exerci. Cu consul cotidieque signiferumque cum, ea has erant fabulas. Ut eos fuisset nostrum, id per placerat convenire conclusionemque, duo ea modo assum albucius.Has labitur eripuit no. Mutat verear gubergren vim et, sonet eripuit tincidunt duo te. Vix an oratio dicant oporteat. Has et congue aliquam expetendis, eam ut esse mandamus scribentur, eam te delenit comprehensam. Minim aeterno reformidans at per." wrapText="true" GridPane.columnSpan="4" />
+                              <TextField fx:id="commandTextField" onAction="#processCommand" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <Button fx:id="sendButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#processCommand" text="Send" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <GridPane.margin>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </GridPane.margin>
+                              </Button>
+                              <CheckBox fx:id="scrollCheckbox" mnemonicParsing="false" onAction="#onScrollCheckboxPress" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <SplitPane dividerPositions="0.5, 0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="3">
+                           <items>
+                              <LineChart fx:id="tempGraph" onMouseClicked="#onGraphFullTab" title="Temperature">
+                                <xAxis>
+                                  <NumberAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </LineChart>
+                              <LineChart fx:id="phGraph" onMouseClicked="#onGraphFullTab" title="pH">
+                                <xAxis>
+                                  <NumberAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </LineChart>
+                              <LineChart fx:id="stirGraph" onMouseClicked="#onGraphFullTab" title="Stirring Rate">
+                                <xAxis>
+                                  <NumberAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </LineChart>
+                           </items>
+                        </SplitPane>
+                     </children>
+                  </GridPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+</BorderPane>

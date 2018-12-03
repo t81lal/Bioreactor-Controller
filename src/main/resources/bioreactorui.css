@@ -1,0 +1,16 @@
+#console-text-area {
+	-fx-controller-inner-background: #004e76;
+	-fx-background-color: #004e76;
+	-fx-font-family: Consolas;
+	-fx-text-fill: #ffffff;
+	-fx-highlight-fill: #ffffff;
+	-fx-highlight-text-fill: #004e76
+}
+
+.content {
+	-fx-background-color: transparent;
+}
+
+.viewport {
+	-fx-background-color: transparent;
+}
