@@ -1,22 +1,15 @@
 package ac.uk.ucl.bioreactor.core;
 
+import java.util.List;
+
+import ac.uk.ucl.bioreactor.core.subsystems.Subsystem;
+import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
+
 public interface Reactor {
 	
-	float getTargetTemperature();
+	List<SubsystemDescriptor> getSupportedSubSystemDescriptors();
 	
-	float getTargetPH();
+	List<Subsystem> getActiveSubSystems();
 	
-	int getTargetStirringRPM();
-	
-	float getCurrentTemperature();
-	
-	float getCurrentPH();
-	
-	int getCurrentStirringRPM();
-	
-	void setTargetTemperature(float val);
-	
-	void setTargetPH(float val);
-	
-	void setTargetStirringRPM(int f);
+	void install(Subsystem subsystem);
 }

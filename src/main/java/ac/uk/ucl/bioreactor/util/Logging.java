@@ -1,7 +1,11 @@
-package ac.uk.ucl.bioreactor.core;
+package ac.uk.ucl.bioreactor.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import ac.uk.ucl.bioreactor.core.CommandProcessor;
+import ac.uk.ucl.bioreactor.core.Context;
+import ac.uk.ucl.bioreactor.core.Program;
 
 public class Logging {
 
@@ -24,6 +28,28 @@ public class Logging {
 	private static void _log(String tag, String format, Object... args) {
 		String userMessage = String.format(format, args);
 		System.out.printf("%s: %s", tag, userMessage);
+	}
+	
+	public static void logProgram(String format, Object... args) {
+		Context context = Context.getActiveContext();
+		CommandProcessor commandProcessor = context.getCommandProcessor();
+		Program program = commandProcessor.getCurrentProgram();
+		if(program != null) {
+			logProgram(program.getName(), format, args);
+		} else {
+			throw new IllegalStateException();
+		}
+	}
+	
+	public static void logProgram(Level level, String format, Object... args) {
+		Context context = Context.getActiveContext();
+		CommandProcessor commandProcessor = context.getCommandProcessor();
+		Program program = commandProcessor.getCurrentProgram();
+		if(program != null) {
+			logProgram(program.getName(), level, format, args);
+		} else {
+			throw new IllegalStateException();
+		}
 	}
 	
 	public static void logProgram(String programName, String format, Object... args) {

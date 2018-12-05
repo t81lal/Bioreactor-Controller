@@ -5,35 +5,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
 
-import ac.uk.ucl.bioreactor.core.Logging.Level;
-import ac.uk.ucl.bioreactor.core.programs.SetProgram;
+import ac.uk.ucl.bioreactor.core.programs.SerialSelectProgram;
+import ac.uk.ucl.bioreactor.util.Logging;
+import ac.uk.ucl.bioreactor.util.Logging.Level;
 
 public class CommandProcessor {
-	
-	private final ExecutorService executorService;
+
+	private final Context context;
 	private final Map<String, Program> programs;
-	private final Reactor reactor;
-	private final ExecutingProgram executingProgram;
+	private final List<ExecutedProgram> executedPrograms;
+	private Program currentProgram;
 	
-	public CommandProcessor(ExecutorService executorService, Reactor reactor) {
-		this.executorService = executorService;
+	public CommandProcessor(Context context) {
+		this.context = context;
 		this.programs = new HashMap<>();
-		this.reactor = reactor;
 		addHelpProgram();
-		addProgram("set", new SetProgram());
+		//addProgram("set", new SetProgram());
+		addProgram("bselect", new SerialSelectProgram());
+		executedPrograms = new ArrayList<>();
 		
-		executingProgram = new ExecutingProgram();
-		executingProgram.programName = "SYSTEM";
-		executingProgram.returnState = true;
-		executingProgram.active = true;
+		ExecutedProgram executedProgram = new ExecutedProgram();
+		executedProgram.programName = "SYSTEM";
+		executedProgram.returnState = true;
+		executedProgram.active = true;
+		
+		executedPrograms.add(executedProgram);
+		
+		currentProgram = null;
+	}
+	
+	public Program getCurrentProgram() {
+		return currentProgram;
 	}
 	
 	private void addHelpProgram() {
 		addProgram("help", new Program() {
 			@Override
-			public boolean execute(Reactor reactor, List<String> _args) {
+			public boolean execute(Context context, List<String> _args) {
 				Logging.logProgram("Help", "Loaded programs:\n");
 				for(Entry<String, Program> e : programs.entrySet()) {
 					Program p = e.getValue();
@@ -44,7 +53,7 @@ public class CommandProcessor {
 					if(usage == null) {
 						usage = "[]";
 					}
-					Logging.logProgram("Help", "Usage: %s <%s>\n", e.getKey(), usage);
+					Logging.logProgram("Help", "Usage: %s %s\n", e.getKey(), usage);
 				}
 				return true;
 			}
@@ -52,6 +61,10 @@ public class CommandProcessor {
 			@Override
 			public String getUsage() {
 				return null;
+			}
+			
+			public String getName() {
+				return "help";
 			}
 		});
 	}
@@ -75,7 +88,7 @@ public class CommandProcessor {
 	}
 	
 	public void process(String input) {
-		executorService.execute(() -> {
+		context.getExecutorService().execute(() -> {
 			processImpl(input);
 		});
 	}
@@ -121,10 +134,11 @@ public class CommandProcessor {
 			}
 			
 			Program prog = programs.get(programName);
+			currentProgram = prog;
 			
-			executorService.execute(() -> {
+			context.getExecutorService().execute(() -> {
 				try {
-					if (!prog.execute(reactor, args)) {
+					if (!prog.execute(context, args)) {
 						Logging.log(Level.WARN, "Program \"%s\" returned false (rejected input)\n", programName);
 					}
 				} catch (Exception e) {
@@ -135,11 +149,10 @@ public class CommandProcessor {
 		}
 	}
 	
-	static class ExecutingProgram {
+	public static class ExecutedProgram {
 		String programName;
 		boolean returnState;
 		boolean active;
 		Exception exception;
-		ExecutingProgram next;
 	}
 }

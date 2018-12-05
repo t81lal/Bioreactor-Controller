@@ -3,26 +3,29 @@ package ac.uk.ucl.bioreactor.ui;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.sun.glass.ui.PlatformFactory;
+import org.gillius.jfxutils.chart.ChartPanManager;
+import org.gillius.jfxutils.chart.JFXChartUtil;
 
 import ac.uk.ucl.bioreactor.core.CommandProcessor;
-import ac.uk.ucl.bioreactor.core.Logging;
+import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.Reactor;
-import ac.uk.ucl.bioreactor.core.Logging.Level;
+import ac.uk.ucl.bioreactor.util.Logging;
+import ac.uk.ucl.bioreactor.util.Logging.Level;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollBar;
@@ -31,6 +34,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public class UIController {
@@ -47,48 +51,90 @@ public class UIController {
 	private TabPane tabbedPane;
 
 	@FXML
-	private LineChart<Float, Float> tempGraph;
+	private LineChart<Number, Number> tempGraph;
 	@FXML
-	private LineChart<Integer, Integer> phGraph;
+	private LineChart<Number, Number> phGraph;
 	@FXML
-	private LineChart<Integer, Integer> stirGraph;
+	private LineChart<Number, Number> stirGraph;
 	
+	private Context context;
 	private ConsoleStream consoleStream;
-	private final ExecutorService executorService;
-	private CommandProcessor commandProcessor;
+	private final Map<LineChart<Number, Number>, GraphTab> graphTabs;
 	
-	public UIController(Reactor reactor) {
-		executorService = Executors.newCachedThreadPool();
-		commandProcessor = new CommandProcessor(executorService, reactor);
+	public UIController(Context context) {
+		this.context = context;
+		graphTabs = new HashMap<>();
+	}
+	
+	static final int MAX_POINTS = 20;
+	
+	public static void setupChart(LineChart<Number, Number> chart) {
+		NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+		xAxis.setLowerBound(0);
+		xAxis.setUpperBound(MAX_POINTS);
+		xAxis.setAutoRanging(false);
+		xAxis.setForceZeroInRange(true);
+		
+		chart.getData().add(new XYChart.Series<>());
+	}
+	
+	public static void updateChart(LineChart<Number, Number> chart, double x, double y) {
+		Platform.runLater(() -> {
+			ObservableList<XYChart.Data<Number, Number>> points = chart.getData().get(0).getData();
+			synchronized (points) {
+				
+//				if(points.size() > MAX_POINTS) {
+//					points.remove(0, points.size() - MAX_POINTS);
+//				}
+				
+				NumberAxis xAxis = (NumberAxis) chart.getXAxis();
+				xAxis.setLowerBound(x - MAX_POINTS);
+				xAxis.setUpperBound(x);
+				points.add(new XYChart.Data<>(x, y%20));
+			}
+		});
 	}
 	
 	public void initialize() {
 		consoleStream = new ConsoleStream(System.out);
 		System.setOut(new PrintStream(consoleStream));
 		
-		XYChart.Series<Float, Float> series = new XYChart.Series<>();
-		tempGraph.getData().add(series);
-		((NumberAxis) (Axis)tempGraph.getXAxis()).setForceZeroInRange(false);
+		setupChart(tempGraph);
+		
+//		JFXChartUtil.setupZooming(tempGraph, (e) -> {
+//			if(e.getButton() != MouseButton.PRIMARY || e.isShortcutDown()) {
+//				e.consume();
+//			}
+//		});
+		{
+			ChartPanManager panner = new ChartPanManager(tempGraph);
+			panner.setMouseFilter((e) -> {
+				if(e.getButton() == MouseButton.SECONDARY || (e.getButton() == MouseButton.PRIMARY && e.isShortcutDown())) {
+					
+				} else {
+					e.consume();
+				}
+			});
+			panner.start();
+		}
 		
 		AtomicInteger x = new AtomicInteger(0);
+		AtomicInteger y = new AtomicInteger(0);
+		
 		boolean running = true;
 		Thread t = new Thread(() -> {
 			while(running) {
 				if(tempGraph != null) {
-					Platform.runLater(() -> {
-						synchronized (series.getData()) {
-							series.getData().add(new XYChart.Data<Float, Float>((float)x.get(), (float)Math.random() * 50));
-							
-							if(x.get() < 50) {
-							} else {
-								series.getData().remove(0);
-							}
-							x.incrementAndGet();
-						}
-					});
-
+					//y.set(y.get() % 20);
+					float yv = Float.intBitsToFloat(y.get());
+					updateChart(tempGraph, x.get(), yv);
+//					if(graphTabs.containsKey(tempGraph)) {
+//						updateChart(graphTabs.get(tempGraph).getOurChart(), x.get(), yv);
+//					}
+					x.incrementAndGet();
+					y.set(Float.floatToIntBits((float)Math.sin(x.get())));
 					try {
-						Thread.sleep(200);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -102,9 +148,9 @@ public class UIController {
 	public void onGraphFullTab(MouseEvent e) {
 		Object src = e.getSource();
 		if(src instanceof LineChart) {
-			@SuppressWarnings("unchecked")
-			LineChart<Integer, Integer> chart = (LineChart<Integer, Integer>) src;
-			openGraphTabAsync(chart);
+//			@SuppressWarnings("unchecked")
+//			LineChart<Number, Number> chart = (LineChart<Number, Number>) src;
+//			openGraphTabAsync(chart);
 		}
 	}
 	
@@ -119,38 +165,45 @@ public class UIController {
 		if(e.getSource() == sendButton || e.getSource() == commandTextField) {
 			String text = commandTextField.getText();
 			commandTextField.clear();
-			executorService.execute(() -> {
+			context.getExecutorService().execute(() -> {
 				Logging.log(Level.USER, "%s\n", text);
-				commandProcessor.process(text);
+				context.getCommandProcessor().process(text);
 			});
 		}
 	}
 	
-	private void openGraphTabAsync(LineChart<Integer, Integer> chart) {
+	private void openGraphTabAsync(LineChart<Number, Number> chart) {
 		CompletableFuture.runAsync(() -> {
 			GraphTab tab = findOrCreateGraphTab(chart);
 			Platform.runLater(() -> {
 				SelectionModel<Tab> model = tabbedPane.getSelectionModel();
 				model.select(tab);
 			});
-		}, executorService);
+		}, context.getExecutorService());
 	}
 	
-	private GraphTab findOrCreateGraphTab(LineChart<Integer, Integer> chart) {
-		for(Tab t : tabbedPane.getTabs()) {
+	private GraphTab findOrCreateGraphTab(LineChart<Number, Number> chart) {
+		/*for(Tab t : tabbedPane.getTabs()) {
 			if(t instanceof GraphTab) {
 				GraphTab gt = (GraphTab) t;
 				if(gt.getParentChart() == chart) {
 					return gt;
 				}
 			}
+		}*/
+		if(graphTabs.containsKey(chart)) {
+			return graphTabs.get(chart);
+		} else {
+			GraphTab tab = createGraphTab(chart);
+			Platform.runLater(() -> {
+				tabbedPane.getTabs().add(tab);
+				graphTabs.put(chart, tab);
+			});
+			return tab;
 		}
-		GraphTab tab = createGraphTab(chart);
-		Platform.runLater(() -> tabbedPane.getTabs().add(tab));
-		return tab;
 	}
 	
-	private GraphTab createGraphTab(LineChart<Integer, Integer> chart) {
+	private GraphTab createGraphTab(LineChart<Number, Number> chart) {
 		GraphTab tab = new GraphTab(chart);
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/graphtab.fxml"));
 		loader.setController(tab);
