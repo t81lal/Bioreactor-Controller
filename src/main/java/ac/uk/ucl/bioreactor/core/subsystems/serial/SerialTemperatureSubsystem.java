@@ -1,16 +1,13 @@
 package ac.uk.ucl.bioreactor.core.subsystems.serial;
 
-import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
-
 import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
 import ac.uk.ucl.bioreactor.core.subsystems.type.TemperatureSubsystem;
 
-public class SerialTemperatureSubsystem extends SerialSubsystem implements TemperatureSubsystem, SerialPortDataListener {
+public class SerialTemperatureSubsystem extends SerialSubsystem implements TemperatureSubsystem {
 
-	public SerialTemperatureSubsystem(Context context, SubsystemDescriptor descriptor, SerialPort port) {
-		super(context, descriptor, port, 'T', () -> context.getUiController().getTempGraph(), 20, "Temp");
+	public SerialTemperatureSubsystem(Context context, SubsystemDescriptor descriptor) {
+		super(context, descriptor, 'T', () -> context.getUiController().getTempGraph(), 20, "Temp");
 	}
 		
 	

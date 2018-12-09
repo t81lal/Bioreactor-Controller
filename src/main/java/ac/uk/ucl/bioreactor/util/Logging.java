@@ -27,6 +27,10 @@ public class Logging {
 		}
 	}
 	
+	private Logging() {
+		throw new UnsupportedOperationException();
+	}
+	
 	private static void _log(String tag, String format, Object... args) {
 		String userMessage = String.format(format, args);
 		System.out.printf("%s: %s\n", tag, userMessage);

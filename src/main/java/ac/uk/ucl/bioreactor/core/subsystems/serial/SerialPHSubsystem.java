@@ -1,15 +1,13 @@
 package ac.uk.ucl.bioreactor.core.subsystems.serial;
 
-import com.fazecast.jSerialComm.SerialPort;
-
 import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
 import ac.uk.ucl.bioreactor.core.subsystems.type.PHSubsystem;
 
 public class SerialPHSubsystem extends SerialSubsystem implements PHSubsystem {
 
-	public SerialPHSubsystem(Context context, SubsystemDescriptor descriptor, SerialPort port) {
-		super(context, descriptor, port, 'P', () -> context.getUiController().getPHGraph(), 7, "PH");
+	public SerialPHSubsystem(Context context, SubsystemDescriptor descriptor) {
+		super(context, descriptor, 'P', () -> context.getUiController().getPHGraph(), 7, "PH");
 	}
 
 	@Override

@@ -12,13 +12,7 @@ import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.Program;
 import ac.uk.ucl.bioreactor.core.subsystems.Subsystem;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.descriptors.PHSubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.descriptors.StirringSubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.descriptors.TemperatureSubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.serial.SerialPHSubsystem;
-import ac.uk.ucl.bioreactor.core.subsystems.serial.SerialStirringSubsystem;
 import ac.uk.ucl.bioreactor.core.subsystems.serial.SerialSubsystem;
-import ac.uk.ucl.bioreactor.core.subsystems.serial.SerialTemperatureSubsystem;
 import ac.uk.ucl.bioreactor.util.Logging;
 import ac.uk.ucl.bioreactor.util.Logging.Level;
 import joptsimple.NonOptionArgumentSpec;
@@ -73,7 +67,8 @@ public class SerialSelectProgram implements Program {
 			if(missingDescs.isEmpty()) {
 				try {
 					for(BoundPort bp : boundPorts) {
-						Subsystem ss = createSubSystem(context, bp.desc, bp.port);
+						SerialSubsystem ss = (SerialSubsystem) bp.desc.createSubsystem(context);
+						ss.setPort(bp.port);
 						ss.init();
 						initialised.add(ss);
 					}
@@ -86,18 +81,6 @@ public class SerialSelectProgram implements Program {
 				}
 			} else {
 				Logging.logProgram(Level.ERROR, "Cannot configure without configuring subsystem ports for: %s", missingDescs);
-			}
-		}
-		
-		Subsystem createSubSystem(Context context, SubsystemDescriptor desc, SerialPort port) {
-			if(desc instanceof PHSubsystemDescriptor) {
-				return new SerialPHSubsystem(context, desc, port);
-			} else if(desc instanceof TemperatureSubsystemDescriptor) {
-				return new SerialTemperatureSubsystem(context, desc, port);
-			} else if(desc instanceof StirringSubsystemDescriptor) {
-				return new SerialStirringSubsystem(context, desc, port);
-			} else {
-				throw new UnsupportedOperationException("Unknown type: " + desc.getClass());
 			}
 		}
 

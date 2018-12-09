@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import ac.uk.ucl.bioreactor.core.binding.BindManager;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.descriptors.StirringSubsystemDescriptor;
-import ac.uk.ucl.bioreactor.core.subsystems.descriptors.TemperatureSubsystemDescriptor;
+import ac.uk.ucl.bioreactor.core.subsystems.serial.descriptors.SerialStirringSubsystemDescriptor;
+import ac.uk.ucl.bioreactor.core.subsystems.serial.descriptors.SerialTemperatureSubsystemDescriptor;
 import ac.uk.ucl.bioreactor.ui.UIController;
 
 public class Context {
@@ -44,9 +45,9 @@ public class Context {
 		commandProcessor = new CommandProcessor(this);
 		
 		List<SubsystemDescriptor> supportedDescriptors = new ArrayList<>();
-//		supportedDescriptors.add(new PHSubsystemDescriptor());
-		supportedDescriptors.add(new TemperatureSubsystemDescriptor());
-		supportedDescriptors.add(new StirringSubsystemDescriptor());
+//		supportedDescriptors.add(new SerialPHSubsystemDescriptor());
+		supportedDescriptors.add(new SerialTemperatureSubsystemDescriptor());
+		supportedDescriptors.add(new SerialStirringSubsystemDescriptor());
 		reactor = new BasicBioReactor(supportedDescriptors);
 	}
 
@@ -68,5 +69,14 @@ public class Context {
 	
 	public BindManager getBindManager() {
 		return bindManager;
+	}
+	
+	private void shutdown() {
+		try {
+			executorService.awaitTermination(0, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

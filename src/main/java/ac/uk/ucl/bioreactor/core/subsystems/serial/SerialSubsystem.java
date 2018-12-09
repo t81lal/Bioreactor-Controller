@@ -23,12 +23,12 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 	private static final long DELTA_TIME_OUT = 7500;
 	private static final long DELTA_RESEND = 1000;
 	
-	private final SerialPort port;
 	private final char subsystemId;
 	private final Supplier<NeatGraph> chartSupplier;
 	
 	private final StringBuilder msgBuffer;
-	
+
+	private SerialPort port;
 	private Future<?> targetSetFuture;
 	private long confirmTimer;
 	private long resendTimer;
@@ -43,12 +43,10 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 	private Binding<Float> targetBinding;
 	private Binding<Float> currentBinding;
 	
-	public SerialSubsystem(Context context, SubsystemDescriptor descriptor, SerialPort port, char subsystemId, Supplier<NeatGraph> chartSupplier, int defaultTarget, String propertyName) {
+	public SerialSubsystem(Context context, SubsystemDescriptor descriptor, char subsystemId, Supplier<NeatGraph> chartSupplier, int defaultTarget, String propertyName) {
 		super(context, descriptor);
-		this.port = port;
 		this.subsystemId = subsystemId;
 		this.chartSupplier = chartSupplier;
-		port.addDataListener(this);
 		
 		defaultValue = defaultTarget;
 		msgBuffer = new StringBuilder();
@@ -64,6 +62,14 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 		
 		chartSupplier.get().setTargetActive(false);
 		Logging.log(Level.DEBUG, "Created %s", getClass().getSimpleName());
+	}
+	
+	public void setPort(SerialPort port) {
+		if(this.port != null && this.port.isOpen()) {
+			throw new UnsupportedOperationException("Already opened connection");
+		}
+		this.port = port;
+		this.port.addDataListener(this);
 	}
 	
 	private void registerBinds() {
