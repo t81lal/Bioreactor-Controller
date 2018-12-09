@@ -1,9 +1,7 @@
 package ac.uk.ucl.bioreactor.core;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,7 +19,6 @@ public class CommandProcessor {
 
 	private final Context context;
 	private final Map<String, Program> programs;
-	private final List<ExecutedProgram> executedPrograms;
 	private Program currentProgram;
 	
 	public CommandProcessor(Context context) {
@@ -32,14 +29,6 @@ public class CommandProcessor {
 		addProgram(new ListBindingsProgram());
 		addProgram(new ReadProgram());
 		addProgram(new WriteProgram());
-		executedPrograms = new ArrayList<>();
-		
-		ExecutedProgram executedProgram = new ExecutedProgram();
-		executedProgram.programName = "SYSTEM";
-		executedProgram.returnState = true;
-		executedProgram.active = true;
-		
-		executedPrograms.add(executedProgram);
 		
 		currentProgram = null;
 	}
@@ -147,12 +136,5 @@ public class CommandProcessor {
 				}
 			});
 		}
-	}
-	
-	public static class ExecutedProgram {
-		String programName;
-		boolean returnState;
-		boolean active;
-		Exception exception;
 	}
 }
