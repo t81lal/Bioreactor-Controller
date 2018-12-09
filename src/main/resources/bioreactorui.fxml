@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import ac.uk.ucl.bioreactor.ui.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.chart.*?>
@@ -62,7 +63,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <TextArea id="console-text-area" fx:id="consoleTextArea" stylesheets="@bioreactorui.css" text="Lorem ipsum dolor sit amet, assum virtute eloquentiam mel eu, mei an prompta mandamus, ex ius cibo justo ancillae. Ut quaeque adipiscing quo, autem legimus duo eu, cum ne forensibus interpretaris. No hinc ridens petentium est. Ea unum deserunt pro, ut quaestio democritum dissentias ius. In vim primis singulis, ea cum consul sadipscing. Nam liber tritani te, ut sea tantas pertinax assentior, ius lobortis sadipscing et.Et has aeque utinam. Esse dicit ut per, his alii mandamus ei. Possim quodsi audiam eos ad, ad labore interesset conclusionemque cum. Posse vocibus propriae ea vel, qui esse eloquentiam ex.Ut nostro tincidunt mnesarchum eum, duo ne luptatum liberavisse, eam quando alterum inciderint ut. At omnis theophrastus quo, in illum dolorem epicurei eam, omnis imperdiet quo ut. Fuisset percipit persequeris no nec, te vocent perpetua iudicabit vim. Ad dicat consulatu neglegentur est, vel assum ancillae no. Ei mel veniam impedit efficiendi, ei mei postea essent invidunt.No diam audiam volutpat eum. Dicant tacimates tincidunt et sit, ei vim mazim maiorum ocurreret. Possit posidonium signiferumque cu vel, an vis liber exerci. Cu consul cotidieque signiferumque cum, ea has erant fabulas. Ut eos fuisset nostrum, id per placerat convenire conclusionemque, duo ea modo assum albucius.Has labitur eripuit no. Mutat verear gubergren vim et, sonet eripuit tincidunt duo te. Vix an oratio dicant oporteat. Has et congue aliquam expetendis, eam ut esse mandamus scribentur, eam te delenit comprehensam. Minim aeterno reformidans at per.Lorem ipsum dolor sit amet, assum virtute eloquentiam mel eu, mei an prompta mandamus, ex ius cibo justo ancillae. Ut quaeque adipiscing quo, autem legimus duo eu, cum ne forensibus interpretaris. No hinc ridens petentium est. Ea unum deserunt pro, ut quaestio democritum dissentias ius. In vim primis singulis, ea cum consul sadipscing. Nam liber tritani te, ut sea tantas pertinax assentior, ius lobortis sadipscing et.Et has aeque utinam. Esse dicit ut per, his alii mandamus ei. Possim quodsi audiam eos ad, ad labore interesset conclusionemque cum. Posse vocibus propriae ea vel, qui esse eloquentiam ex.Ut nostro tincidunt mnesarchum eum, duo ne luptatum liberavisse, eam quando alterum inciderint ut. At omnis theophrastus quo, in illum dolorem epicurei eam, omnis imperdiet quo ut. Fuisset percipit persequeris no nec, te vocent perpetua iudicabit vim. Ad dicat consulatu neglegentur est, vel assum ancillae no. Ei mel veniam impedit efficiendi, ei mei postea essent invidunt.No diam audiam volutpat eum. Dicant tacimates tincidunt et sit, ei vim mazim maiorum ocurreret. Possit posidonium signiferumque cu vel, an vis liber exerci. Cu consul cotidieque signiferumque cum, ea has erant fabulas. Ut eos fuisset nostrum, id per placerat convenire conclusionemque, duo ea modo assum albucius.Has labitur eripuit no. Mutat verear gubergren vim et, sonet eripuit tincidunt duo te. Vix an oratio dicant oporteat. Has et congue aliquam expetendis, eam ut esse mandamus scribentur, eam te delenit comprehensam. Minim aeterno reformidans at per." wrapText="true" GridPane.columnSpan="4" />
+                              <TextArea id="console-text-area" fx:id="consoleTextArea" editable="false" stylesheets="@bioreactorui.css" wrapText="true" GridPane.columnSpan="4" />
                               <TextField fx:id="commandTextField" onAction="#processCommand" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Button fx:id="sendButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#processCommand" text="Send" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <GridPane.margin>
@@ -74,33 +75,9 @@
                         </GridPane>
                         <SplitPane dividerPositions="0.5, 0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" GridPane.rowSpan="3">
                            <items>
-                              <LineChart fx:id="tempGraph" onMouseClicked="#onGraphFullTab" title="Temperature">
-                                <xAxis>
-                                  <NumberAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                              </LineChart>
-                              <LineChart fx:id="phGraph" onMouseClicked="#onGraphFullTab" title="pH">
-                                <xAxis>
-                                  <NumberAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </LineChart>
-                              <LineChart fx:id="stirGraph" onMouseClicked="#onGraphFullTab" title="Stirring Rate">
-                                <xAxis>
-                                  <NumberAxis side="BOTTOM" />
-                                </xAxis>
-                                <yAxis>
-                                  <NumberAxis side="LEFT" />
-                                </yAxis>
-                              </LineChart>
+                              <NeatGraph fx:id="tempGraph" onMouseClicked="#onGraphFullTab" title="Temperature" />
+                              <NeatGraph fx:id="phGraph" onMouseClicked="#onGraphFullTab" title="pH" />
+                              <NeatGraph fx:id="stirGraph" onMouseClicked="#onGraphFullTab" title="Stir Rate" />
                            </items>
                         </SplitPane>
                      </children>
