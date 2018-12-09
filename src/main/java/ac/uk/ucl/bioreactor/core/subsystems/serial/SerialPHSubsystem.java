@@ -2,49 +2,32 @@ package ac.uk.ucl.bioreactor.core.subsystems.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
 
+import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
 import ac.uk.ucl.bioreactor.core.subsystems.type.PHSubsystem;
 
 public class SerialPHSubsystem extends SerialSubsystem implements PHSubsystem {
 
-	public SerialPHSubsystem(SubsystemDescriptor descriptor, SerialPort port) {
-		super(descriptor, port);
+	public SerialPHSubsystem(Context context, SubsystemDescriptor descriptor, SerialPort port) {
+		super(context, descriptor, port, 'P', () -> context.getUiController().getPHGraph(), 7, "PH");
 	}
 
 	@Override
 	public void setTargetPH(float f) {
-		// TODO Auto-generated method stub
-		
+		setTargetValue(f);
 	}
 
 	@Override
 	public float getTargetPH() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCurrentTarget();
 	}
 
 	@Override
 	public float getCurrentPH() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCurrentValue();
 	}
 
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
+	protected void onCustomPacketEvent(char header, String msg) throws Exception {
 	}
-
-	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

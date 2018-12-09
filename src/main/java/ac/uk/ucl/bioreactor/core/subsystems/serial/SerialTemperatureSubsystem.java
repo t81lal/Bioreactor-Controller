@@ -1,49 +1,35 @@
 package ac.uk.ucl.bioreactor.core.subsystems.serial;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
 
+import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
 import ac.uk.ucl.bioreactor.core.subsystems.type.TemperatureSubsystem;
 
-public class SerialTemperatureSubsystem extends SerialSubsystem implements TemperatureSubsystem {
+public class SerialTemperatureSubsystem extends SerialSubsystem implements TemperatureSubsystem, SerialPortDataListener {
 
-	public SerialTemperatureSubsystem(SubsystemDescriptor descriptor, SerialPort port) {
-		super(descriptor, port);
+	public SerialTemperatureSubsystem(Context context, SubsystemDescriptor descriptor, SerialPort port) {
+		super(context, descriptor, port, 'T', () -> context.getUiController().getTempGraph(), 20, "Temp");
 	}
-
-	@Override
-	public void init() {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void start() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public void setTargetTemperature(float f) {
-		// TODO Auto-generated method stub
-		
+		setTargetValue(f);
 	}
 
 	@Override
 	public float getCurrentTemperature() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCurrentValue();
 	}
 
 	@Override
 	public float getTargetTemperature() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCurrentTarget();
+	}
+
+	@Override
+	protected void onCustomPacketEvent(char header, String msg) throws Exception {
 	}
 }

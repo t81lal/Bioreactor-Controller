@@ -1,10 +1,14 @@
 package ac.uk.ucl.bioreactor.core.subsystems;
 
+import ac.uk.ucl.bioreactor.core.Context;
+
 public abstract class Subsystem {
 	
-	private final SubsystemDescriptor descriptor;
+	protected final Context context;
+	protected final SubsystemDescriptor descriptor;
 	
-	public Subsystem(SubsystemDescriptor descriptor) {
+	public Subsystem(Context context, SubsystemDescriptor descriptor) {
+		this.context = context;
 		this.descriptor = descriptor;
 	}
 	

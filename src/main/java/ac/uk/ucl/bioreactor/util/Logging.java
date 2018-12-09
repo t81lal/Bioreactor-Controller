@@ -9,6 +9,8 @@ import ac.uk.ucl.bioreactor.core.Program;
 
 public class Logging {
 
+	private static boolean debuggingActive = false;
+	
 	public static enum Level {
 		USER, INFO, WARN, DEBUG, ERROR, FATAL;
 		private final String prefix;
@@ -27,7 +29,7 @@ public class Logging {
 	
 	private static void _log(String tag, String format, Object... args) {
 		String userMessage = String.format(format, args);
-		System.out.printf("%s: %s", tag, userMessage);
+		System.out.printf("%s: %s\n", tag, userMessage);
 	}
 	
 	public static void logProgram(String format, Object... args) {
@@ -57,7 +59,9 @@ public class Logging {
 	}
 	
 	public static void logProgram(String programName, Level level, String format, Object... args) {
-		log("[" + programName + ":" + level.getRawTag() + "]", format, args);
+		if(acceptLevel(level)) {
+			log("[" + programName + ":" + level.getRawTag() + "]", format, args);
+		}
 	}
 	
 	public static void log(String customTag, String format, Object... args) {
@@ -65,7 +69,9 @@ public class Logging {
 	}
 	
 	public static void log(Level level, String format, Object... args) {
-		_log(level.getTag(), format, args);
+		if(acceptLevel(level)) {
+			_log(level.getTag(), format, args);
+		}
 	}
 	
 	public static void fatalError(String format, Object... args) {
@@ -88,12 +94,18 @@ public class Logging {
 	}
 	
 	public static void logThrowable(Level level, Throwable t) {
+		if(!acceptLevel(level))
+			return;
 		StringWriter sw = new StringWriter();
 		t.printStackTrace(new PrintWriter(sw));
 		
 		String tag = level.getTag();
 		for(String line : sw.toString().split(System.lineSeparator())) {
-			_log(tag, "%s\n", line);
+			_log(tag, "%s", line);
 		}
+	}
+	
+	private static boolean acceptLevel(Level level) {
+		return debuggingActive || level != Level.DEBUG;
 	}
 }

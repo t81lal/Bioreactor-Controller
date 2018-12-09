@@ -1,6 +1,5 @@
 package ac.uk.ucl.bioreactor.ui;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Tab;
@@ -8,17 +7,15 @@ import javafx.scene.control.Tab;
 public class GraphTab extends Tab {
 
 	@FXML
-	private LineChart<Number, Number> ourChart;
-	private final LineChart<Number, Number> parentChart;
+	private NeatGraph ourChart;
+	private NeatGraph parentChart;
 	
-	GraphTab(LineChart<Number, Number> parentChart) {
+	GraphTab(NeatGraph parentChart) {
 		this.parentChart = parentChart;
 	}
 	
 	public void initialize() {
-		Platform.runLater(() -> {
-			UIController.setupChart(ourChart);
-		});
+		parentChart.setChild(ourChart);
 	}
 	
 	public LineChart<Number, Number> getOurChart() {
