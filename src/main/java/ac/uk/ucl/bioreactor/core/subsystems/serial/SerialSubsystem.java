@@ -1,5 +1,8 @@
 package ac.uk.ucl.bioreactor.core.subsystems.serial;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -16,6 +19,7 @@ import ac.uk.ucl.bioreactor.core.binding.DualDelegatingBinding;
 import ac.uk.ucl.bioreactor.core.subsystems.Subsystem;
 import ac.uk.ucl.bioreactor.core.subsystems.SubsystemDescriptor;
 import ac.uk.ucl.bioreactor.ui.NeatGraph;
+import ac.uk.ucl.bioreactor.util.FileUtil;
 import ac.uk.ucl.bioreactor.util.Logging;
 import ac.uk.ucl.bioreactor.util.Logging.Level;
 
@@ -43,10 +47,22 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 	private Binding<Float> targetBinding;
 	private Binding<Float> currentBinding;
 	
+	private FileOutputStream dataFos;
+	
 	public SerialSubsystem(Context context, SubsystemDescriptor descriptor, char subsystemId, Supplier<NeatGraph> chartSupplier, int defaultTarget, String propertyName) {
 		super(context, descriptor);
 		this.subsystemId = subsystemId;
 		this.chartSupplier = chartSupplier;
+		
+		try {
+			File f = new File(FileUtil.outputDir, propertyName + String.valueOf(System.currentTimeMillis()) + ".csv");
+			if(!f.exists()) {
+				f.createNewFile();
+			}
+			dataFos = new FileOutputStream(f);
+		} catch (IOException e) {
+			Logging.logThrowable(Level.ERROR, e);
+		}
 		
 		defaultValue = defaultTarget;
 		msgBuffer = new StringBuilder();
@@ -174,6 +190,8 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 				chartSupplier.get().addPoint(d, currentValue);
 				lastPlotTime = (float) d;
 			}
+			String logLine = rawTimeMs + "," + currentValue;
+			dataFos.write(logLine.getBytes());
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

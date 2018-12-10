@@ -1,5 +1,9 @@
 package ac.uk.ucl.bioreactor.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -9,6 +13,18 @@ import ac.uk.ucl.bioreactor.core.Program;
 
 public class Logging {
 
+	private static FileOutputStream logFos;
+	
+	static {
+		try {
+			logFos = new FileOutputStream(new File(FileUtil.outputDir, "log" + String.valueOf(System.currentTimeMillis()) + ".txt"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.err.println("NO LOG FILE");
+			logFos = null;
+		}
+	}
+	
 	private static boolean debuggingActive = false;
 	
 	public static enum Level {
@@ -33,7 +49,20 @@ public class Logging {
 	
 	private static void _log(String tag, String format, Object... args) {
 		String userMessage = String.format(format, args);
-		System.out.printf("%s: %s\n", tag, userMessage);
+		String finalMsg = String.format("%s: %s\n", tag, userMessage);
+		System.out.print(finalMsg);
+		
+		if(logFos != null) {
+			Context.getActiveContext().getExecutorService().execute(() -> {
+				synchronized (logFos) {
+					try {
+						logFos.write(finalMsg.getBytes());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 	}
 	
 	public static void logProgram(String format, Object... args) {

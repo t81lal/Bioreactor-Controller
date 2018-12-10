@@ -4,7 +4,7 @@ import java.io.File;
 
 public class FileUtil {
 
-	private static final File outputDir = new File("out/");
+	public static final File outputDir = new File("out/");
 	
 	static {
 		if(!outputDir.exists()) {
