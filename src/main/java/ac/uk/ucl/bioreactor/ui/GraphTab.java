@@ -15,6 +15,10 @@ public class GraphTab extends Tab {
 	}
 	
 	public void initialize() {
+		bind();
+	}
+	
+	public void bind() {
 		parentChart.setChild(ourChart);
 	}
 	

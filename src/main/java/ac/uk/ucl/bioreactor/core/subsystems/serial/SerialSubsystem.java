@@ -28,7 +28,7 @@ public abstract class SerialSubsystem extends Subsystem implements SerialPortDat
 	private static final long DELTA_RESEND = 1000;
 	
 	private final char subsystemId;
-	private final Supplier<NeatGraph> chartSupplier;
+	public final Supplier<NeatGraph> chartSupplier;
 	
 	private final StringBuilder msgBuffer;
 

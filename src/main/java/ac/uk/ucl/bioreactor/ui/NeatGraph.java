@@ -27,6 +27,7 @@ public class NeatGraph extends LineChart<Number, Number> {
 	private final Series<Number, Number> targetSeries;
 
 	private boolean isTargetActive;
+	private double targetY;
 	
 	private NeatGraph child;
 	
@@ -116,6 +117,8 @@ public class NeatGraph extends LineChart<Number, Number> {
 			throw new IllegalArgumentException();
 		}
 		this.child = child;
+		this.child.setTargetActive(isTargetActive);
+		this.child.setTargetY(targetY);
 	}
 	
 	public void addPoint(double x, double y) {
@@ -151,6 +154,8 @@ public class NeatGraph extends LineChart<Number, Number> {
 	}
 	
 	public void setTargetY(double targetY) {
+		setTargetActive(true);
+		this.targetY = targetY;
 		Platform.runLater(() -> {
 			targetSeries.setName("Target(" + String.valueOf(targetY) + ")");
 			ObservableList<Data<Number, Number>> data = targetSeries.getData();

@@ -5,7 +5,11 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import ac.uk.ucl.bioreactor.core.Context;
 import ac.uk.ucl.bioreactor.util.Logging;
@@ -70,7 +74,46 @@ public class UIController {
 		System.setOut(new PrintStream(consoleStream));
 		
 		commandTextField.setText("");
+
+		phGraph.setTargetY(5);
+		tempGraph.setTargetY(25);
+		stirGraph.setTargetY(1000);
+		long start = System.currentTimeMillis();
+		ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
+		es.scheduleWithFixedDelay(() -> {
+			long delta = System.currentTimeMillis() - start;
+			double d = Math.round(delta / 1000D * 2) / 2.0;
+			addPoint(phGraph, d, 5, true);
+			addPoint(tempGraph, d, 25, false);
+			addPoint(stirGraph, d, 1000, true);
+		}, 2000, 500, TimeUnit.MILLISECONDS);
 	}
+	
+	Random r = new Random();
+	
+	private void addPoint(NeatGraph g, double x, double targ, boolean allowHold) {
+		if(!pos.containsKey(g)) {
+			pos.put(g, targ);
+		}
+		double p = pos.get(g);
+		
+		double holdBias = r.nextDouble();
+		if(!allowHold || holdBias > 0.4) {
+			double d = ((r.nextDouble() * 2) - 1)*(targ/10);
+			
+			if(Math.abs(targ - (p + d)) >= (targ/5)) {
+				p -= d;
+			} else {
+				p += d;
+			}
+			pos.put(g, p);	
+		}
+		g.addPoint(x, p );
+	}
+	
+	Map<NeatGraph, Double> vel = new HashMap<>();
+	Map<NeatGraph, Double> pos = new HashMap<>();
+	
 	
 	public void onGraphFullTab(MouseEvent e) {
 		Object src = e.getSource();
@@ -132,6 +175,7 @@ public class UIController {
 		try {
 			loader.load();
 			tab.setText(chart.getTitle() + " Graph");
+			tab.bind();
 			return tab;
 		} catch (IOException e) {
 			Logging.fatalError("Could not load graph tab fxml", e);
